@@ -7,8 +7,8 @@ import createEmbed from '../utils/commands/createEmbed.js';
 import createAuthData from '../utils/functions/createAuthData.js';
 
 const command: Command = {
-    name: 'dupe',
-    description: 'Duplicate items from your Save the World inventory.',
+    name: 'leaveparty',
+    description: 'Leave your current party.',
     type: ApplicationCommandType.ChatInput,
     execute: async (interaction) => {
         await interaction.deferReply();
@@ -29,7 +29,7 @@ const command: Command = {
 
         await deletePartyMember(auth.accessToken, auth.accountId, party.current[0].id);
 
-        await interaction.editReply({ embeds: [createEmbed('success', 'Dupe successful!')] });
+        await interaction.editReply({ embeds: [createEmbed('success', 'Party left successfully.')] });
     }
 };
 

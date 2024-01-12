@@ -11,14 +11,11 @@ const getBanner = async (userId: string) => {
         throw new Error('Failed to create authorization data');
     }
 
-    let bannerId = 'standardbanner1';
 
-    const campaignProfile = await composeMcp<CampaignProfileData>(auth, 'campaign', 'QueryProfile');
-
+    const campaignProfile = await composeMcp<CampaignProfileData>(auth, 'athena', 'QueryProfile');
     const items = campaignProfile.profileChanges[0].profile.items;
 
-    console.log(Object.values(items).filter((v) => v.templateId.startsWith('CosmeticLocker:') && v))
-
+    let bannerId = 'standardbanner1';
     bannerId = Object.values(items)
         .filter((v) => v.templateId.startsWith('CosmeticLocker:') && v)
         .map((v) => v.attributes.banner_icon_template)[0];
