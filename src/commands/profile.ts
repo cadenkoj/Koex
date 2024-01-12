@@ -54,7 +54,7 @@ async function executeSTW(interaction: CommandInteraction) {
     const outpostLevels = Object.values(metadata.items)
         .filter((v) => Object.keys(outposts).includes(v.templateId))
         .sort((a, b) => a.templateId.localeCompare(b.templateId))
-        .map((v) => `**${outposts[v.templateId]}: ${v.attributes.level} / 10**\n${Emoji.REPLY} Endurance: ${v.attributes.outpost_core_info.highestEnduranceWaveReached} / 30`);
+        .map((v) => `**${outposts[v.templateId]}: ${v.attributes.level} / 10**\n${Emoji.REPLY} Endurance Wave: ${v.attributes.outpost_core_info.highestEnduranceWaveReached} / 30`);
 
     const researchLevels = Object.entries(research_levels).map(
         ([k, v]) => `${Emoji[k.toUpperCase() as keyof typeof Emoji]} ${v}`
