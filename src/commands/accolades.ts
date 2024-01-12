@@ -56,6 +56,10 @@ const command: Command = {
             {
                 name: "Last Reset",
                 value: lastReset.toLocaleDateString("en-US", { timeZone: 'UTC' }) + " " + lastUpdate.toLocaleTimeString("en-US", { timeZone: 'UTC' }) + " UTC"
+            },
+            {
+                name: "XP Cap Reached",
+                value: daily >= 368000 ? Emoji.CHECK : Emoji.CROSS
             })
             .setFooter({ text: auth.displayName, iconURL: avatarUrl })
             .setTimestamp();
