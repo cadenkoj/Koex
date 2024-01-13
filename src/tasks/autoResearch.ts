@@ -177,16 +177,16 @@ const startAutoResearchTask = async (client: ExtendedClient) => {
                 }
 
                 let researchPoints = researchTokens[0].quantity;
-                const levels = profile.stats.attributes.research_levels
+                const partialLevels = profile.stats.attributes.research_levels
 
-                if (!levels) {
-                    fields.push({
-                        name: auth.displayName,
-                        value: 'No research stats found.'
-                    });
-                    continue;
+                const defaultLevels = {
+                    technology: 0,
+                    offense: 0,
+                    fortitude: 0,
+                    resistance: 0,
                 }
 
+                const levels = { ...defaultLevels, ...partialLevels }
                 const stats = Object.keys(levels) as (keyof typeof levels)[];
 
                 let max = 0;
