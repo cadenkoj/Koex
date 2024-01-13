@@ -52,7 +52,7 @@ export const setAccounts = async (userId: string, auths?: Account[], active_acco
         throw new Error(error.message);
     }
 
-    return (data as any).auths;
+    return null;
 };
 
 export const getAutoResearchUsers = async () => {
