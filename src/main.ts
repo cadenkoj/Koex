@@ -26,9 +26,11 @@ validateEnv();
 
 client.login();
 
-cron.schedule('*/30 * * * *', async () => {
+const job = cron.schedule('*/30 * * * *', async () => {
     await startAutoResearchJob(client);
 })
+
+job.start();
 
 await loadEvents(client);
 
