@@ -31,7 +31,6 @@ const createAuthData = async (userId: string, accountId?: string): Promise<Beare
             displayName: oAuthData.displayName
         };
     } catch (error) {
-        console.log(error);
         return null;
     }
 };
