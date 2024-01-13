@@ -210,9 +210,9 @@ const startAutoResearchTask = async (client: ExtendedClient) => {
                     if (level < 120) {
                         if (cost <= researchPoints) {
                             await composeMcp(bearerAuth, 'campaign', 'PurchaseResearchStatUpgrade', { statId: _.capitalize(stat) }),
-                            field.value += `${Emoji[stat.toUpperCase() as keyof typeof Emoji]} **${level}** → **${level + 1}** ${Emoji.CHECK} Spent ${cost}\n`;
+                            field.value += `${Emoji[stat.toUpperCase() as keyof typeof Emoji]} **${level}** → **${level + 1}** ${Emoji.CHECK} ${Emoji.RESEARCH} -${cost.toLocaleString()}\n`;
                         } else {
-                            field.value += `${Emoji[stat.toUpperCase() as keyof typeof Emoji]} **${level}** ${Emoji.CROSS} ${researchPoints} / ${cost}\n`;
+                            field.value += `${Emoji[stat.toUpperCase() as keyof typeof Emoji]} **${level}** ${Emoji.CROSS} ${Emoji.RESEARCH} ${researchPoints.toLocaleString()} / ${cost.toLocaleString()}\n`;
                         }
                     } else {
                         max++;
