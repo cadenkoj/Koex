@@ -4,9 +4,9 @@ import { ActivityType } from 'discord.js';
 
 import { Event } from '../interfaces/Event.js';
 import { ExtendedClient } from '../interfaces/ExtendedClient.js';
-// import { deleteCatalogCache } from '../jobs/clearCache.js';
 import loadCommands from '../utils/handlers/loadCommands.js';
 import loadComponents from '../utils/handlers/loadComponents.js';
+import startAutoResearchJob from '../tasks/autoResearch.js';
 
 export const event: Event<true> = {
     execute: async (client: ExtendedClient) => {
@@ -22,10 +22,6 @@ export const event: Event<true> = {
                 type: ActivityType.Watching
             });
         }, 60 * 1000);
-
-        // cron.schedule('0 0 * * *', async () => {
-        //     await deleteCatalogCache(client);
-        // });
     }
 };
 

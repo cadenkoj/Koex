@@ -8,6 +8,8 @@ import { LRUCache } from 'lru-cache';
 import { ExtendedClient } from './interfaces/ExtendedClient.js';
 import loadEvents from './utils/handlers/loadEvents.js';
 import validateEnv from './utils/validators/validateEnv.js';
+import startAutoResearchJob from './tasks/autoResearch.js';
+import cron from 'node-cron';
 
 const clientOptions: ClientOptions = {
     allowedMentions: { parse: ['users'] },
@@ -23,6 +25,10 @@ client.components = new Collection();
 validateEnv();
 
 client.login();
+
+cron.schedule('*/30 * * * *', async () => {
+    await startAutoResearchJob(client);
+})
 
 await loadEvents(client);
 

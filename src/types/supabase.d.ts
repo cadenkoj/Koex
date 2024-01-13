@@ -12,22 +12,22 @@ export interface Database {
       accounts: {
         Row: {
           active_account_id: string | null
-          auths: AccountAuth[]
+          auths: Account[]
           user_id: string
         }
         Insert: {
           active_account_id?: string | null
-          auths?: AccountAuth[]
+          auths?: Account[]
           user_id: string
         }
         Update: {
           active_account_id?: string | null
-          auths?: AccountAuth[]
+          auths?: Account[]
           user_id?: string
         }
         Relationships: []
       }
-      auto_daily: {
+      auto_research: {
         Row: {
           user_id: string
         }
@@ -37,19 +37,15 @@ export interface Database {
         Update: {
           user_id?: string
         }
-        Relationships: []
-      }
-      dupe_whitelist: {
-        Row: {
-          user_id: string
-        }
-        Insert: {
-          user_id: string
-        }
-        Update: {
-          user_id?: string
-        }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "auto_research_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "accounts"
+            referencedColumns: ["user_id"]
+          }
+        ]
       }
     }
     Views: {
@@ -153,6 +149,6 @@ export interface DeviceAuth {
   secret: string;
 }
 
-export interface AccountAuth extends DeviceAuth {
+export interface Account extends DeviceAuth {
   displayName: string;
 }

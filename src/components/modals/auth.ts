@@ -6,7 +6,7 @@ import createOAuthData from '../../api/auth/createOAuthData.js';
 import { FORTNITE_GAME_CLIENT, Color } from '../../constants.js';
 import { Component } from '../../interfaces/Component.js';
 import createEmbed from '../../utils/commands/createEmbed.js';
-import { getAllAccounts, saveAccount } from '../../utils/functions/database.js';
+import { getAccount, saveAccount } from '../../utils/functions/database.js';
 import getAvatar from '../../utils/functions/getAvatar.js';
 
 const modal: Component<ModalSubmitInteraction> = {
@@ -22,7 +22,7 @@ const modal: Component<ModalSubmitInteraction> = {
         });
 
         const deviceAuth = await createDeviceAuth(oAuthData.access_token, oAuthData.account_id);
-        const accounts = await getAllAccounts(interaction.user.id);
+        const accounts = await getAccount(interaction.user.id);
 
         if (accounts && accounts.auths.length === 5) {
             await interaction.editReply({

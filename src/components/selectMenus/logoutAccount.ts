@@ -4,7 +4,7 @@ import moment from 'moment';
 import { Color } from '../../constants.js';
 import { Component } from '../../interfaces/Component.js';
 import createEmbed from '../../utils/commands/createEmbed.js';
-import { getAllAccounts, setAccounts } from '../../utils/functions/database.js';
+import { getAccount, setAccounts } from '../../utils/functions/database.js';
 
 const selectMenu: Component<StringSelectMenuInteraction> = {
     name: 'logoutAccount',
@@ -13,7 +13,7 @@ const selectMenu: Component<StringSelectMenuInteraction> = {
 
         const accountIds = interaction.values;
 
-        const accounts = await getAllAccounts(interaction.user.id);
+        const accounts = await getAccount(interaction.user.id);
 
         if (!accounts || !accounts.auths.length) {
             await interaction.editReply({ embeds: [createEmbed('info', 'You are not logged into any accounts.')] });

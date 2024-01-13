@@ -7,7 +7,7 @@ import createEmbed from '../utils/commands/createEmbed.js';
 import createAuthData from '../utils/functions/createAuthData.js';
 
 const command: Command = {
-    name: 'leaveparty',
+    name: 'leave',
     description: 'Leave your current party.',
     type: ApplicationCommandType.ChatInput,
     execute: async (interaction) => {

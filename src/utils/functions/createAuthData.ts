@@ -1,6 +1,6 @@
 import createOAuthData from '../../api/auth/createOAuthData.js';
 import { FORTNITE_GAME_CLIENT } from '../../constants.js';
-import { getAllAccounts } from './database.js';
+import { getAccount } from './database.js';
 
 export interface BearerAuth {
     accountId: string;
@@ -9,11 +9,11 @@ export interface BearerAuth {
 }
 
 const createAuthData = async (userId: string, accountId?: string): Promise<BearerAuth | null> => {
-    const accounts = await getAllAccounts(userId);
+    const accounts = await getAccount(userId);
 
     if (!accounts) return null;
 
-    const auth = accounts.auths.find((a) => a.accountId === (accountId ?? accounts.active_account_id));
+    const auth = accounts.auths.find((a) => a.accountId === (accountId || accounts.active_account_id));
 
     if (!auth) return null;
 
@@ -30,7 +30,8 @@ const createAuthData = async (userId: string, accountId?: string): Promise<Beare
             accessToken: oAuthData.access_token,
             displayName: oAuthData.displayName
         };
-    } catch {
+    } catch (error) {
+        console.log(error);
         return null;
     }
 };

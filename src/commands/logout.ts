@@ -3,7 +3,7 @@ import { ActionRowBuilder, ApplicationCommandType, EmbedBuilder, StringSelectMen
 import { Color } from '../constants.js';
 import { Command } from '../interfaces/Command.js';
 import createEmbed from '../utils/commands/createEmbed.js';
-import { getAllAccounts } from '../utils/functions/database.js';
+import { getAccount } from '../utils/functions/database.js';
 
 const command: Command = {
     name: 'logout',
@@ -12,7 +12,7 @@ const command: Command = {
     execute: async (interaction) => {
         await interaction.deferReply({ ephemeral: true });
 
-        const accounts = await getAllAccounts(interaction.user.id);
+        const accounts = await getAccount(interaction.user.id);
 
         if (!accounts || !accounts.auths.length) {
             await interaction.editReply({ embeds: [createEmbed('info', 'You are not logged into any accounts.')] });
