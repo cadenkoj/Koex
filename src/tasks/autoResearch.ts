@@ -152,14 +152,21 @@ const startAutoResearchTask = async (client: ExtendedClient) => {
 
                 const { profile } = campaignProfile.profileChanges[0];
                 const collectorsToClaim = Object.keys(profile.items).filter((v) => profile.items[v].templateId === 'CollectedResource:Token_collectionresource_nodegatetoken01');
-                console.log(collectorsToClaim)
                 await composeMcp(bearerAuth, 'campaign', 'ClaimCollectedResources', { "collectorsToClaim": collectorsToClaim });
 
                 campaignProfile = await composeMcp<CampaignProfileData>(bearerAuth, 'campaign', 'QueryPublicProfile');
 
-                const researchPoints = profile.items[
-                    Object.keys(profile.items).filter(k => profile.items[k].templateId === 'Token:collectionresource_nodegatetoken01')[0]
-                ].quantity;
+                const researchTokens = Object.values(profile.items).filter(v => v.templateId === 'Token:collectionresource_nodegatetoken01')
+
+                if (!researchTokens.length) {
+                    fields.push({
+                        name: auth.displayName,
+                        value: 'No research stats found.'
+                    });
+                    continue;
+                }
+
+                const researchPoints = researchTokens[0].quantity;
 
                 const field = {
                     name: `${bearerAuth.displayName}'s Research Summary`,
