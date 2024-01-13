@@ -1,5 +1,6 @@
 import { APIEmbedField, codeBlock, EmbedBuilder, WebhookClient } from 'discord.js';
 
+import _ from 'lodash';
 import composeMcp from '../api/mcp/composeMcp.js';
 import { Color, Emoji } from '../constants.js';
 import { ExtendedClient } from '../interfaces/ExtendedClient.js';
@@ -95,8 +96,6 @@ const researchKeys = [
     }
 ];
 
-const stats = ['Fortitude', 'Offense', 'Resistance', 'Technology'] as const;
-
 const startAutoResearchTask = async (client: ExtendedClient) => {
     const users = await getAutoResearchUsers();
 
@@ -154,18 +153,19 @@ const startAutoResearchTask = async (client: ExtendedClient) => {
                     continue;
                 }
 
-                const { profile } = campaignProfile.profileChanges[0];
-                const collectorsToClaim = Object.keys(profile.items).filter(
-                    (v) => profile.items[v].templateId === 'CollectedResource:Token_collectionresource_nodegatetoken01'
-                );
+                let { profile } = campaignProfile.profileChanges[0];
+
+                const collectorsToClaim = Object.keys(profile.items)
+                    .filter((v) => profile.items[v].templateId === 'CollectedResource:Token_collectionresource_nodegatetoken01');
+
                 await composeMcp(bearerAuth, 'campaign', 'ClaimCollectedResources', {
                     collectorsToClaim: collectorsToClaim
                 });
 
                 campaignProfile = await composeMcp<CampaignProfileData>(bearerAuth, 'campaign', 'QueryPublicProfile');
+                profile = campaignProfile.profileChanges[0].profile;
 
-                const researchTokens = Object
-                    .values(profile.items)
+                const researchTokens = Object.values(profile.items)
                     .filter((v) => v.templateId === 'Token:collectionresource_nodegatetoken01');
 
                 if (!researchTokens.length) {
@@ -176,7 +176,7 @@ const startAutoResearchTask = async (client: ExtendedClient) => {
                     continue;
                 }
 
-                const researchPoints = researchTokens[0].quantity;
+                let researchPoints = researchTokens[0].quantity;
                 const levels = profile.stats.attributes.research_levels
 
                 if (!levels) {
@@ -187,14 +187,20 @@ const startAutoResearchTask = async (client: ExtendedClient) => {
                     continue;
                 }
 
-                const field = {
-                    name: bearerAuth.displayName,
-                    value: ''
-                };
+                const stats = Object.keys(levels) as (keyof typeof levels)[];
 
                 let max = 0;
-                for (const stat of stats) {
-                    const level = levels[stat.toLowerCase() as keyof typeof levels]!;
+                const field = { name: bearerAuth.displayName, value: '' } satisfies APIEmbedField;
+
+                for (const stat of stats.sort((a, b) => levels[a]! - levels[b]!)) {
+                    campaignProfile = await composeMcp<CampaignProfileData>(bearerAuth, 'campaign', 'QueryPublicProfile');
+                    profile = campaignProfile.profileChanges[0].profile;
+
+                    researchPoints = Object.values(profile.items)
+                        .filter((v) => v.templateId === 'Token:collectionresource_nodegatetoken01')[0]
+                        .quantity;
+
+                    const level = levels[stat]!;
 
                     let cost = 0;
                     for (const item of researchKeys) {
@@ -203,8 +209,8 @@ const startAutoResearchTask = async (client: ExtendedClient) => {
 
                     if (level < 120) {
                         if (cost <= researchPoints) {
-                            await composeMcp(bearerAuth, 'campaign', 'PurchaseResearchStatUpgrade', { statId: stat }),
-                                (field.value += `${Emoji[stat.toUpperCase() as keyof typeof Emoji]} **${level}** > **${level + 1}** ${Emoji.CHECK} Spent ${cost}\n`);
+                            await composeMcp(bearerAuth, 'campaign', 'PurchaseResearchStatUpgrade', { statId: _.capitalize(stat) }),
+                            field.value += `${Emoji[stat.toUpperCase() as keyof typeof Emoji]} **${level}** → **${level + 1}** ${Emoji.CHECK} Spent ${cost}\n`;
                         } else {
                             field.value += `${Emoji[stat.toUpperCase() as keyof typeof Emoji]} **${level}** ${Emoji.CROSS} ${researchPoints} / ${cost}\n`;
                         }
@@ -214,7 +220,6 @@ const startAutoResearchTask = async (client: ExtendedClient) => {
                 }
 
                 if (max === 4) field.value += 'All stats maxed-out!\n';
-
                 fields.push(field);
             }
 
